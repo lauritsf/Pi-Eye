@@ -1,0 +1,13 @@
+[Unit]
+Description=Pi Eye Camera Service
+After=multi-user.target
+
+[Service]
+Type=simple
+User=pi
+Group=pieye
+Restart=always
+ExecStart=/usr/bin/python3.9 /home/pi/Pi-Eye/src/server.py
+
+[Install]
+WantedBy=multi-user.target
