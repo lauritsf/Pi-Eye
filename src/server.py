@@ -16,6 +16,6 @@ hostnames = [
 ]
 assert socket.gethostname() in hostnames
 
-port = 8080 + np.where(hostnames == socket.gethostname())[0][0]
+port = 8080 + np.where(np.array(hostnames) == socket.gethostname())[0][0]
 
 run(host=host, port=port, debug=True, reloader=True)
