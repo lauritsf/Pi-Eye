@@ -1,10 +1,21 @@
 import socket
-
+import numpy as np
 from routes import *
 from bottle import run
 
 host = (
     socket.gethostname() + ".local"
-)  # should be something like: pieye-spider.local, this is set when setting up the pieye
+)  # should be something like: pieye-ant.local, this is set when setting up the pieye
 
-run(host=host, port=8080, debug=True, reloader=True)
+hostnames = [
+    "pieye-ant",
+    "pieye-beetle",
+    "pieye-cicada",
+    "pieye-dragonfly",
+    "pieye-earwig",
+]
+assert socket.gethostname() in hostnames
+
+port = 8080 + np.where(hostnames == socket.gethostname())[0][0]
+
+run(host=host, port=port, debug=True, reloader=True)

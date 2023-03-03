@@ -27,13 +27,13 @@ sudo apt-get install libatlas-base-dev -y # used for update numpy
 sudo apt-get install python3-opencv -y
 ```
 5. Clone git repo 
-     `git clone https://github.com/robertahunt/Pi-Eye.git`
+     `git clone https://github.com/NHMDenmark/Pi-Eye.git`
    if in development - `scp /home/rob/.ssh/id_github pi@pieyene.local:/home/pi/.ssh/id_github` from main computer, then on pi - 
 ```bash
 eval "$(ssh-agent)"
 ssh-add ~/.ssh/id_github
 ssh -T git@github.com # test
-git clone git@github.com:robertahunt/Pi-Eye.git
+git clone git@github.com:NHMDenmark/Pi-Eye.git
 git config --global user.email "rehunt@ualberta.ca"
 git config --global user.name "Roberta"
 ```

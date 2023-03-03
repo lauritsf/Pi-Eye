@@ -11,7 +11,7 @@ sudo apt install python3-opencv
 eval "$(ssh-agent)"
 ssh-add ~/.ssh/id_github
 ssh -T git@github.com # test
-git clone git@github.com:robertahunt/Pi-Eye.git /home/pi/Pi-Eye
+git clone git@github.com:NHMDenmark/Pi-Eye.git /home/pi/Pi-Eye
 git config --global user.email "rehunt@ualberta.ca"
 git config --global user.name "Roberta"
 
