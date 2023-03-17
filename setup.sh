@@ -1,16 +1,16 @@
 #!/bin/bash
 
 # install software needed
-sudo apt-get update -y
-sudo apt-get install git -y
-sudo apt-get install python3-pip -y
-sudo apt-get install libatlas-base-dev -y
-sudo apt install python3-opencv -y
+# sudo apt-get update -y
+# sudo apt-get install git -y
+# sudo apt-get install python3-pip -y
+# sudo apt-get install libatlas-base-dev -y
+# sudo apt install python3-opencv -y
 
 # get latest code
-git clone https://github.com/NHMDenmark/Pi-Eye.git /home/pi/Pi-Eye
+# git clone https://github.com/NHMDenmark/Pi-Eye.git /home/pi/Pi-Eye
 
-sudo chmod +x Pi-Eye/setup.sh
+# sudo chmod +x Pi-Eye/setup.sh
 
 # install python modules
 python -m pip install bottle
