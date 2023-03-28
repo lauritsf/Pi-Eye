@@ -14,6 +14,7 @@ class PiEye:
 
     def __init__(self, debug=False):
         self.logger = self.make_logger(debug)
+        self.image_cache = {}
 
     def make_logger(self, debug):
         """Make Logger
@@ -70,7 +71,9 @@ class PiEye:
 
             self.logger.debug("Setting up configuration..")
             self.image_config = self.camera.create_still_configuration(
-                main={"format": "YUV420"}, lores={"size": (320, 240), "format":"YUV420"}, display="lores"
+                main={"format": "BGR888"},
+                lores={"size": (320, 240), "format": "YUV420"},
+                display="lores",
             )
 
             # ensures sizes match sensor sizes and speeds up capture
