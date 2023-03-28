@@ -35,7 +35,7 @@ def get_preview():
     array = cv2.cvtColor(array, cv2.COLOR_YUV420p2BGR)
 
     # save array to buffer - faster than saving the image to disk
-    plt.imsave(buf, array)
+    plt.imsave(buf, array, format="jpeg")
 
     buf.seek(0)
     byts = buf.read()
@@ -82,12 +82,10 @@ def get_cached_image(image_name):
     if array is None:
         abort(590, "Image no longer cached... could not fetch.")
     buf = io.BytesIO()
-    plt.imsave(buf, array)
+    plt.imsave(buf, array, format="jpeg")
     buf.seek(0)
     byts = buf.read()
-    response.set_header(
-        "Content-type", "image/jpeg"
-    )  # for debugging, displays as a jpeg in the browser
+    response.set_header("Content-type", "image/jpeg")
 
     now2 = np.datetime64("now")
     eye.logger.debug(now2 - now1, "Took to get and buf image")
