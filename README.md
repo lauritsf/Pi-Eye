@@ -48,10 +48,7 @@ The raspberry pi zeros are physically mounted onto the raspberry pi HQ cameras u
 
 TODO
 1. Make a service to update the git on the pi automatically if there is a new release - including copying the pieye.service file and rebooting the service? - if this works, remove the cronjob from setup.sh
-4. Make requirements file so all python versions stay fixed . install from said file
-6. Add photo of setup to this readme / EntomoloGUI readme
-6. Add photo of single pi-eye with arrows pointing to things
-8. Check image formats - make sure it is correct
-9. Check in reinit camera -  create_preview_configuration() - can this be better used?
+2. Make requirements file so all python versions stay fixed . install from said file
+3. Add photo of single pi-eye with arrows pointing to things
 
 
