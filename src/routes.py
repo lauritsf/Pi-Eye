@@ -31,8 +31,8 @@ def get_preview():
     buf = io.BytesIO()
     array = eye.capture_preview()
 
-    # convert to RGB - done on client side now - faster and more adaptable
-    # array = cv2.cvtColor(array, cv2.COLOR_YUV420p2BGR)
+    # convert to RGB
+    array = cv2.cvtColor(array, cv2.COLOR_YUV420p2BGR)
 
     # save array to buffer - faster than saving the image to disk
     plt.imsave(buf, array)
@@ -76,8 +76,8 @@ def get_cached_image(image_name):
 
     array = eye.get_cached_image(image_name)
 
-    # convert to RGB - done on client side now - faster and more adaptable
-    # array = cv2.cvtColor(array, cv2.COLOR_YUV420p2BGR)
+    # convert to RGB
+    array = cv2.cvtColor(array, cv2.COLOR_YUV420p2BGR)
 
     if array is None:
         abort(590, "Image no longer cached... could not fetch.")
