@@ -69,11 +69,8 @@ class PiEye:
             self.camera = Picamera2()
 
             self.logger.debug("Setting up configuration..")
-            self.preview_config = (
-                self.camera.create_preview_configuration()
-            )  # CR: TODO: Check if can be removed, or if is better to use
             self.image_config = self.camera.create_still_configuration(
-                main={"format": "XRGB8888"}, lores={"size": (320, 240)}, display="lores"
+                main={"format": "YUV420"}, lores={"size": (320, 240), "format":"YUV420"}, display="lores"
             )
 
             # ensures sizes match sensor sizes and speeds up capture
