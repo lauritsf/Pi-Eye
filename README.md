@@ -52,3 +52,11 @@ TODO
 3. Add photo of single pi-eye with arrows pointing to things
 
 
+Troubleshootig Pieyes
+
+1. ssh into Pieye: ssh pi@pieye-name.local
+2. Check status of Pieye: sudo systemctl status pieye
+3. Try restart with: sudo systemctl restart pieye
+4. Try runnng script manually with return path to server.py
+5. Try reboot with: sudo reboot
+6. delete __pycache__ on pieye 
