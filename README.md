@@ -26,6 +26,7 @@ Each pi-eye has several components:
 3. Put the sd card into the zero, plug it into power and one cable to your computer. Your computer should now be able to connect via usb-ethernet to the raspberry pi zero. (try `ssh pi@pieye-ant.local`)
 4. [Linux] Ensure in your network settings that ipv4 and ipv6 are set to 'shared to other computers' - this allows the pi to access the internet through your computer
 4. [Mac] Ensure internet sharing is turned on - this allows the pi to access the internet through your computer
+4. [Windows] Share your internet connection with the pi zero. This can be done by setting up a bridge connection between the pi zero and your internet connection.
 5. [Linux] Once it says 'connected', you should be able to ssh into the pi - `ssh pi@pieye-ant.local` #(note, must be lowercase)
 5. Check that the pi is able to access the internet - try `ping google.com` once you are remotely connected to the pi - if not, try restarting both the pi and the computer
 6. Install git and pip
@@ -33,14 +34,24 @@ Each pi-eye has several components:
 sudo apt-get update -y 
 sudo apt-get install git -y
 sudo apt-get install python3-pip -y
-sudo apt-get install libatlas-base-dev -y # used for update numpy 
-sudo apt-get install python3-opencv -y
 ```
 5. Clone git repo `git clone https://github.com/NHMDenmark/Pi-Eye.git`
-6. Run setup.sh that installs some extras and sets up the pieye service `sudo chmod +x Pi-Eye/setup.sh`, `./Pi-Eye/setup.sh`
-7. optional - for development it was nice to run vscode remote to code on the pi, however, it kept restarting due to not enough memory/swap
-   so installed sudo apt install zram-tools (see https://www.reddit.com/r/raspberry_pi/comments/wyi6yi/raspberry_pi_zero_2_suddenly_very_slow/)
-   or increase swap size: `sudo nano /etc/dphys-swapfile` change `CONF_SWAPSIZE=100` to `CONF_SWAPSIZE=2048`. reboot after this
+6. Run setup.sh that installs some extras and sets up the pieye service `sudo chmod +x Pi-Eye/install_pieye.sh`, `./Pi-Eye/install_pieye.sh`
+
+# Update Instructions
+To update your Pi-Eye, use the provided script that automates the update process. Run the following command in your terminal:
+```bash
+sudo chmod +x Pi-Eye/scripts/update_pieye.sh
+./Pi-Eye/scripts/update_pieye.sh
+```
+
+# Uninstall Instructions
+To uninstall your Pi-Eye, use the provided script that automates the uninstall process. Run the following command in your terminal:
+```bash
+sudo chmod +x Pi-Eye/scripts/uninstall_pieye.sh
+./Pi-Eye/scripts/uninstall_pieye.sh
+```
+
 
 # Physical Setup
 The raspberry pi zeros are physically mounted onto the raspberry pi HQ cameras using the 3d printed mounts.
@@ -57,6 +68,6 @@ Troubleshootig Pieyes
 1. ssh into Pieye: ssh pi@pieye-name.local
 2. Check status of Pieye: sudo systemctl status pieye
 3. Try restart with: sudo systemctl restart pieye
-4. Try runnng script manually with return path to server.py
+4. Try runnng script manually with `python3 -m pieye`or `pieye`
 5. Try reboot with: sudo reboot
 6. delete __pycache__ on pieye 
