@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name="pieye",
     python_requires=">=3.9",
-    version="0.0.1",
+    version=pieye.__version__,
     description="Pi Eye Camera Service",
     author="Laurits Fredsgaard Larsen, Roberta Eleanor Hunt",
     license="MIT",
