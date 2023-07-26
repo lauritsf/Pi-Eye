@@ -23,6 +23,6 @@ sudo sed -i 's/#RuntimeWatchdogSec=0/RuntimeWatchdogSec=10/' /etc/systemd/system
 sudo sed -i 's/#ShutdownWatchdogSec=10min/ShutdownWatchdogSec=2min/' /etc/systemd/system.conf
 
 # Get version of package
-VERSION = $(python -c "import pieye; print(pieye.__version__)")
+VERSION=$(python -c "import pieye; print(pieye.__version__)")
 
 echo "Pi Eye Camera Service has been installed with version $VERSION."
