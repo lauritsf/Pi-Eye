@@ -1,1 +1,43 @@
+# Ignore compiled Python files
+*.pyc
+
+# Ignore Python cache directories
 __pycache__/
+
+# Ignore logs
+pieye.log
+
+# Ignore compiled Python modules
+*.pyo
+*.pyd
+*.pyw
+__pycache__/
+
+# Ignore virtual environment
+venv/
+env/
+virtualenv/
+myenv/
+env27/
+env37/
+.venv/
+
+# Ignore built distribution files
+dist/
+build/
+*.egg-info/
+
+# Ignore local development settings
+local_settings.py
+
+# Ignore system-specific or editor-specific files
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Ignore any generated files or artifacts
+*.log
+
+# Ignore system files and directories
+.boot/
+*.swp
