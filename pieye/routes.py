@@ -127,4 +127,10 @@ def list_routes():
     Returns:
         dict: Dictionary of valid routes
     """
-    return {"valid routes": ["/reinitCamera", "/getPreview", "/getStill"]}
+    return {"valid routes": [
+        "/"
+        "/camera/reinitialize",
+        "/camera/preview",
+        "/camera/still-capture",
+    ]}
+
