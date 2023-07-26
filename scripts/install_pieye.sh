@@ -5,6 +5,9 @@ REPO_URL="https://github.com/NHMDenmark/Pi-Eye.git"
 # Clone repository
 git clone "$REPO_URL" /home/pi/Pi-Eye
 
+# Change directory
+cd /home/pi/Pi-Eye
+
 # Install the Python package
 pip install .
 
