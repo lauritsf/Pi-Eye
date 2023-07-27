@@ -14,18 +14,15 @@ from bottle import run
 import argparse
 
 
-def run_server(host=None, port=8080, debug=False, reloader=False):
+def run_server(host="0.0.0.0", port=8080, debug=False, reloader=False):
     """Start the server with the given configuration.
     
     Args:
-        host (str, optional): Hostname to run server on (default: system hostname)
+        host (str, optional): Host to run server on (default: '0.0.0.0')
         port (int, optional): Port to run server on (default: 8080)
         debug (bool, optional): Run in debug mode (default: False)
         reloader (bool, optional): Run with reloader (default: False). Only works when not using camera.
         """
-    if not host:
-        host = socket.gethostname() + ".local"
-
     run(host=host, port=port, debug=debug, reloader=reloader)
 
 def main():
@@ -46,8 +43,8 @@ def main():
     parser.add_argument(
         "--host",
         type=str,
-        default=socket.gethostname() + ".local",
-        help="Hostname to run server on (default: system hostname)",
+        default="0.0.0.0",
+        help="Host to run server on (default: '0.0.0.0')",
     )
     parser.add_argument(
         "--port",
