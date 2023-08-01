@@ -13,42 +13,71 @@ Each pi-eye has several components:
 5. 8 M2 bolts (around 10mm) and nuts 
 
 # Installation Instructions
-1. Write raspberry pi os LITE (32 bit) [release 2022-09-22] to an sd card (recommended 16 GB) with the following settings: 
+## Raspberry Pi / Device Setup
+We need to install the raspberry pi OS lite on the card and configure it to be able to connect to the internet via usb-ethernet. This is done by enabling the pi to be run in usb device mode. This is done by editing the files on the sd card before booting the pi.
+1. Write Raspberry Pi OS Lite (32 bit) [release 2022-09-22] using the Raspberry Pi Imager to an sd card (recommended 16 GB) with the following settings: 
    - hostname: pieye-[name].local. choose one of: (pieye-ant.local, pieye-beetle.local, pieye-cicada.local, pieye-dragonfly.local, pieye-earwig.local)
    - username: pi 
-   - password: see NHMD secrets 
+   - password: ****** [see NHMD secrets]
    - locale settings: Denmark
-2. Once the pi OS has been installed on the sd card, enable the device to be run in usb device mode by completing the following:
-    1. with the sd card still in your computer, edit the following in the 'boot' partition of the sd card (see the 'boot files' folder for some examples of what these should look like, but note that you cannot just copy these directly):
-        1. config.txt - comment out the line `# otg_mode=1` and add the line `dtoverlay=dwc2` to the bottom of the file
-        2. ssh - add an empty file called "ssh" to the boot partition - this enables ssh
-        3. cmdline.txt - insert `modules-load=dwc2,g_ether g_ether.host_addr=00:22:82:ff:ff:20 g_ether.dev_addr=00:22:82:ff:ff:22` after rootwait. ensure there is one single space on either side of the command, and ensure the mac addresses are different for the different pis. - specifying the mac addresses is necessary because by default the mac address changes on reboot, and then the network settings are reset which is annoying. For each pi I changed the address by modifying the last letter in the mac address to match the pi - ie `00:22:82:ff:fa:20` and `00:22:82:ff:fa:22` for pieye-ant.local
-3. Put the sd card into the zero, plug it into power and one cable to your computer. Your computer should now be able to connect via usb-ethernet to the raspberry pi zero. (try `ssh pi@pieye-ant.local`)
-4. [Linux] Ensure in your network settings that ipv4 and ipv6 are set to 'shared to other computers' - this allows the pi to access the internet through your computer
-4. [Mac] Ensure internet sharing is turned on - this allows the pi to access the internet through your computer
-4. [Windows] Share your internet connection with the pi zero. This can be done by setting up a bridge connection between the pi zero and your internet connection.
-5. [Linux] Once it says 'connected', you should be able to ssh into the pi - `ssh pi@pieye-ant.local` #(note, must be lowercase)
-5. Check that the pi is able to access the internet - try `ping google.com` once you are remotely connected to the pi - if not, try restarting both the pi and the computer
-6. Install git and pip
+2. `bootfs` should be mounted automatically. Modify the following files:
+    - `config.txt`: Change `otg_mode=1` to `# otg_mode=1` and add `dtoverlay=dwc2` to the bottom of the file
+    - `ssh`: Add an empty file called "ssh" to the boot partition - this enables ssh
+    - `cmdline.txt`: Insert `modules-load=dwc2,g_ether g_ether.host_addr=00:22:82:ff:ff:20 g_ether.dev_addr=00:22:82:ff:ff:22` after rootwait.
+    Keep one single space on either side of the command, and ensure the mac addresses are different for the different pis. Refer to the table below for the mac addresses for each pi.
+
+    | Device hostname  | host_addr        | dev_addr        |
+    | ------- | ---------------- | --------------- |
+    | **X**name    | 00:22:82:ff:f**X**:20| 00:22:82:ff:f**X**:22|
+    | pieye-ant     | 00:22:82:ff:fa:20| 00:22:82:ff:fa:22|
+    | pieye-beetle  | 00:22:82:ff:fb:20| 00:22:82:ff:fb:22|
+    | pieye-cicada  | 00:22:82:ff:fc:20| 00:22:82:ff:fc:22|
+    | pieye-dragonfly | 00:22:82:ff:fd:20| 00:22:82:ff:fd:22|
+    | pieye-earwig  | 00:22:82:ff:fe:20| 00:22:82:ff:fe:22|
+3. Unmount the sd card and insert it into the pi zero. Plug the pi zero into your computer using the micro usb cable.
+4. Share your internet connection with the pi zero.
+    - [Mac] In network settings, a new network interface should appear called 'RNDIS/Ethernet Gadget'. If it does not connect automatically, try setting the ip address manually to `192.168.0.1`
+    - [Windows] If internet sharing does not work, try setting up a bridge connection between the pi zero and your internet connection.
+5. The raspberry pi should now be accessible on pieye-[name].local through mDNS. Confirm that you can see the pi by pinging it in the terminal: `ping pieye-[name].local` (eg. `ping pieye-ant.local`)
+6. ssh into the pi using `ssh pi@pieye-[name].local` (eg. `ssh pi@pieye-ant.local`). You will need the ssh password from earlier (see NHMD secrets).
+7. You can confirm that the pi is connected to the internet by pinging a website: `ping google.com`
+8. Install git and pip:
 ```bash
-sudo apt-get update -y 
-sudo apt-get install git -y
-sudo apt-get install python3-pip -y
+sudo apt-get update -y && sudo apt-get install git python3-pip -y
 ```
-5. Clone git repo `git clone https://github.com/NHMDenmark/Pi-Eye.git`
-6. Run setup.sh that installs some extras and sets up the pieye service `sudo chmod +x Pi-Eye/install_pieye.sh`, `./Pi-Eye/install_pieye.sh`
+## Pi-Eye installation
+Once the Raspberry Pi has is setup, connected to the internet and has git and pip installed, we can install the Pi-Eye software.
+### Option 1: Install from source and start service
+The following will run the setup script, cloning the Pi-Eye repository and enabling the service
+```bash
+curl -sSL https://raw.githubusercontent.com/NHMDenmark/Pi-Eye/main/scripts/setup_pieye.sh | bash
+```
+
+### Option 2: Pip install, but no service
+Note that this requires manually starting the service after each reboot.
+```bash
+python -m pip install git+https://github.com/NHMDenmark/Pi-Eye.git
+```
+
+# Usage Instructions
+The Pi-Eye service is started automatically on boot. To check the status of the service, run the following command in your terminal:
+```bash
+systemctl status pieye
+```
+If the service is not installed, you can run the pieye software with
+```bash
+python -m pieye
+```
 
 # Update Instructions
 To update your Pi-Eye, use the provided script that automates the update process. Run the following command in your terminal:
 ```bash
-sudo chmod +x Pi-Eye/scripts/update_pieye.sh
 ./Pi-Eye/scripts/update_pieye.sh
 ```
 
 # Uninstall Instructions
 To uninstall your Pi-Eye, use the provided script that automates the uninstall process. Run the following command in your terminal:
 ```bash
-sudo chmod +x Pi-Eye/scripts/uninstall_pieye.sh
 ./Pi-Eye/scripts/uninstall_pieye.sh
 ```
 
@@ -65,9 +94,11 @@ TODO
 
 Troubleshootig Pieyes
 
+
 1. ssh into Pieye: ssh pi@pieye-name.local
-2. Check status of Pieye: sudo systemctl status pieye
-3. Try restart with: sudo systemctl restart pieye
+2. Check status of Pieye: `sudo systemctl status pieye`
+3. Try restart with: `sudo systemctl restart pieye`
 4. Try runnng script manually with `python3 -m pieye`or `pieye`
 5. Try reboot with: sudo reboot
 6. delete __pycache__ on pieye 
+7. If you cannot connect to the raspberry pi, try unplugging it from power and the computer, and then plug it back in.
