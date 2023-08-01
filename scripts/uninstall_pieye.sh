@@ -4,7 +4,7 @@
 sudo systemctl stop pieye.service
 sudo systemctl disable pieye.service
 
-# Remobe the service file from systemd directory
+# Remove the service file from systemd directory
 sudo rm /lib/systemd/system/pieye.service
 
 # Uninstall the Python package
