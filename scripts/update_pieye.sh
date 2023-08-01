@@ -9,11 +9,17 @@ cd /home/pi/Pi-Eye
 # Get current version of package
 OLD_VERSION=$(python -c "import pieye; print(pieye.__version__)")
 
-# Update the repositoyy
+# Update the repository
 git pull
 
 # Reinstall the Python package
 pip install . --upgrade
+
+# replace the .service file in systemd directory
+sudo cp pieye.service /lib/systemd/system/
+
+# Reload the service
+sudo systemctl daemon-reload
 
 # Start the service
 sudo systemctl start pieye.service
