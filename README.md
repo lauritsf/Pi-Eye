@@ -86,19 +86,29 @@ To uninstall your Pi-Eye, use the provided script that automates the uninstall p
 The raspberry pi zeros are physically mounted onto the raspberry pi HQ cameras using the 3d printed mounts.
 
 
-TODO
-1. Make a service to update the git on the pi automatically if there is a new release - including copying the pieye.service file and rebooting the service? - if this works, remove the cronjob from setup.sh
+
+# Troubleshootig Pieyes
+## Pieye does not show up when I ping it
+1. Check that the pi is connected to the computer via usb
+2. Check that the pi shows up in network settings
+    - It should appear as a RNDS/Ethernet Gadget interface
+    - Check that the ip address is set to `192.168.0.1`
+3. Connect to monitor via hdmi and check for errors.
+    - Check that the IP, hostname and mac addresses displayed on the screen are correct
+    - Check that the pi is able to ping the computer at `192.168.0.1`
+    - Check that the Pieye service is running without errors
+4. Try rebooting the pi and reconnecting it to the computer
+
+## The Pieye server does not respond
+1. Check that you can ping the pieye from the computer
+2. Check that the Pieye service is running without errors
+    - ssh into the pieye: `ssh pi@pieye-[name].local`
+    - Check status of Pieye: `sudo systemctl status pieye`
+    - Try restarting the service with `sudo systemctl restart pieye`
+    - Alternatively: check the status of the service with `journalctl -u pieye`
+3. Try rebooting the pi and reconnecting it to the computer
+
+# TODO
+1. Make a service to update the git on the pi automatically if there is a new release - including copying the pieye.service file and rebooting the service? - if this works, remove the cronjob from setup.sh - However, consider if this is a good idea, as it might be better to have a manual update process to avoid breaking things
 2. Make requirements file so all python versions stay fixed . install from said file
 3. Add photo of single pi-eye with arrows pointing to things
-
-
-Troubleshootig Pieyes
-
-
-1. ssh into Pieye: ssh pi@pieye-name.local
-2. Check status of Pieye: `sudo systemctl status pieye`
-3. Try restart with: `sudo systemctl restart pieye`
-4. Try runnng script manually with `python3 -m pieye`or `pieye`
-5. Try reboot with: sudo reboot
-6. delete __pycache__ on pieye 
-7. If you cannot connect to the raspberry pi, try unplugging it from power and the computer, and then plug it back in.
