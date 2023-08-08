@@ -15,16 +15,39 @@ Each pi-eye has several components:
 # Installation Instructions
 ## Raspberry Pi / Device Setup
 We need to install the raspberry pi OS lite on the card and configure it to be able to connect to the internet via usb-ethernet. This is done by enabling the pi to be run in usb device mode. This is done by editing the files on the sd card before booting the pi.
+### Flashing the sd card
 1. Write Raspberry Pi OS Lite (32 bit) [release 2022-09-22] using the Raspberry Pi Imager to an sd card (recommended 16 GB) with the following settings: 
    - hostname: pieye-[name].local. choose one of: (pieye-ant.local, pieye-beetle.local, pieye-cicada.local, pieye-dragonfly.local, pieye-earwig.local)
    - username: pi 
    - password: ****** [see NHMD secrets]
    - locale settings: Denmark
-2. `bootfs` should be mounted automatically. Modify the following files:
-    - `config.txt`: Change `otg_mode=1` to `# otg_mode=1` and add `dtoverlay=dwc2` to the bottom of the file
-    - `ssh`: Add an empty file called "ssh" to the boot partition - this enables ssh
-    - `cmdline.txt`: Insert `modules-load=dwc2,g_ether g_ether.host_addr=00:22:82:ff:ff:20 g_ether.dev_addr=00:22:82:ff:ff:22` after rootwait.
-    Keep one single space on either side of the command, and ensure the mac addresses are different for the different pis. Refer to the table below for the mac addresses for each pi.
+2. The `bootfs` partition should be mounted automatically. If not, mount it manually.
+3. We now need to modify the `bootfs` files. This can be done automatically or manually.
+
+
+### bootfs file modifications (Automatic)
+We can use `scripts/setup_pi_preboot.sh` to automatically modify the files on the sd card. This script will: 
+1. Enable ssh
+2. Enable usb-ethernet
+3. Enable usb device mode
+4. Set the MAC address of the pi zero
+
+Execute the script, passing the device name and mount point of the sd card as arguments.
+```bash
+./scripts/setup_pi_preboot.sh <device name> <mount point>
+```
+Example:    
+```bash
+./scripts/setup_pi_preboot.sh pieye-ant /Volumes/bootfs
+```
+
+### bootfs file modifications (Manual)
+If you prefer to modify the files manually, you can perform the following in the root of the `bootfs` partition:
+1. Enable ssh by creating an empty file called "ssh" in the root of the boot partition
+2. Enable usb-ethernet by adding `dtoverlay=dwc2` to the bottom of the `config.txt` file
+3. Change `otg_mode=1` to `# otg_mode=1` in the `config.txt` file
+4. In `cmdline.txt` insert `modules-load=dwc2,g_ether g_ether.host_addr=00:22:82:ff:ff:20 g_ether.dev_addr=00:22:82:ff:ff:22` after rootwait.
+    - Keep one single space on either side of the command, and ensure the mac addresses are different for the different pis. Refer to the table below for the mac addresses for each pi.
 
     | Device hostname  | host_addr        | dev_addr        |
     | ------- | ---------------- | --------------- |
