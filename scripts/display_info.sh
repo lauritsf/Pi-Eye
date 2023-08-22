@@ -17,14 +17,21 @@ while :; do
     # Get Hostname
     HOSTNAME=$(hostname)
 
+    # If IP address is empty, provide an informative message
+    if [[ -z $IP ]]; then
+        IP="IP address not available."
+        PING_RESULT="Ping cannot be performed without an IP."
+        ARP_CACHE="ARP cache not available without an IP."
+    else
+        # Ping the Mac/PC (grab only second line)
+        PING_RESULT=$(ping -c 1 192.168.0.1 | sed -n 2p)
+
+        # Get ARP cache
+        ARP_CACHE=$(arp -a)
+    fi
+
     # Get MAC address
     MAC_ADDRESS=$(ip link show usb0 | awk '/ether/ {print $2}')
-
-    # Ping the Mac/PC (grab only second line)
-    PING_RESULT=$(ping -c 1 192.168.0.1 | sed -n 2p)
-
-    # Get ARP cache
-    ARP_CACHE=$(arp -a)
 
     # Get the status of pieye.service
     PIEYE_STATUS=$(systemctl status pieye.service)
