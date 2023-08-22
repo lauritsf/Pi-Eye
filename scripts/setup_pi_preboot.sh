@@ -10,7 +10,7 @@
 # Function to modify config.txt
 modify_config_txt() {
   if [ -f "$1"/config.txt ]; then
-    sed -i'' 's/^otg_mode=1/# otg_mode=1/' "$1"/config.txt
+    sed -i '' 's/^otg_mode=1/# otg_mode=1/' "$1"/config.txt
     echo "dtoverlay=dwc2" >> "$1"/config.txt
   else
     echo "config.txt not found in $1. Skipping modification."
@@ -23,28 +23,25 @@ enable_ssh() {
   touch "$1"/ssh
 }
 
-# Function to get MAC address from the lookup table based on device name
-get_mac_address() {
-  device_name=$1
-  grep "$device_name" lookup_table.txt | awk '{print $2, $3}'
-}
-
 # Function to modify cmdline.txt
 modify_cmdline_txt() {
   device_name=$1
-  mac_addresses=$(get_mac_address "$device_name")
-  host_addr=$(echo "$mac_addresses" | awk '{print $1}')
-  dev_addr=$(echo "$mac_addresses" | awk '{print $2}')
+  host_addr=$(grep "$device_name" lookup_table.txt | awk '{print $2}')
+  dev_addr=$(grep "$device_name" lookup_table.txt | awk '{print $3}')
 
-  mac_command="modules-load=dwc2,g_ether g_ether.host_addr=${host_addr} g_ether.dev_addr=${dev_addr}"
+  commands="modules-load=dwc2,g_ether g_ether.host_addr=${host_addr} g_ether.dev_addr=${dev_addr}"
+
 
   if [ -f "$2"/cmdline.txt ]; then
-    sed -i'' "s/rootwait/rootwait ${mac_command}/" "$2"/cmdline.txt
+    # insert commands after rootwait
+    sed -i '' "s/rootwait/rootwait ${commands}/" "$2"/cmdline.txt
   else
     echo "cmdline.txt not found in $2. Skipping modification."
     exit 1
   fi
 }
+
+
 
 # Main script
 if [ $# -ne 2 ]; then
@@ -53,6 +50,7 @@ if [ $# -ne 2 ]; then
 fi
 
 # Lookup table for MAC addresses
+# Format: device_name host_addr dev_addr
 cat <<EOF > lookup_table.txt
 pieye-ant 00:22:82:ff:fa:20 00:22:82:ff:fa:22
 pieye-beetle 00:22:82:ff:fb:20 00:22:82:ff:fb:22
