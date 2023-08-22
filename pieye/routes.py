@@ -25,7 +25,10 @@ def init_camera():
     camera.preview_configuration = camera.create_preview_configuration(
         main={"size": (320, 240), "format": "RGB888"}
     )
-    camera.still_configuration = camera.create_still_configuration(raw={})
+    camera.still_configuration = camera.create_still_configuration(
+        main={"size": (4056, 3040), "format": "RGB888"},
+        raw={}
+        )
     camera.configure("preview")
 
     camera.start()
@@ -81,6 +84,28 @@ def get_preview():
     except Exception as e:
         abort(500, "Error when getting preview image: " + str(e))
 
+@route('/camera/full-preview')
+def get_full_preview():
+    """Fetch a full resolution preview image from the camera.
+
+    Returns:
+        bytes: A JPEG image buffer.
+
+    Raises:
+        500: An error occurred fetching the preview image.
+    """
+    try:
+        image = camera.switch_mode_and_capture_image("still", name="main")
+
+        # Convert image array to bytes buffer
+        image_buffer = io.BytesIO()
+        image.save(image_buffer, format="jpeg")
+        image_buffer.seek(0)
+
+        response.set_header("Content-type", "image/jpeg")
+        return image_buffer.getvalue()
+    except Exception as e:
+        abort(500, "Error when getting full resolution preview image: " + str(e))
 
 @route("/camera/still-capture")
 def get_still():
@@ -130,6 +155,7 @@ def list_routes():
     return {"valid routes": [
         "/",
         "/camera/reinitialize",
+        "/camera/full-preview",
         "/camera/preview",
         "/camera/still-capture",
     ]}
