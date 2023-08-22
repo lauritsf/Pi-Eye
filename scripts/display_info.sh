@@ -9,6 +9,18 @@ cleanup() {
 
 trap cleanup SIGINT # Run cleanup function on Ctrl+C
 
+get_dhcp_info() {
+    # Extract dhcp information for usb0 interface
+    DHCP_INFO=$(dhcpcd -4 -U usb0)
+
+    IP_ADDRESS=$(echo "$DHCP_INFO" | awk -F"'" '/ip_address/ {print $2}')
+    BROADCAST_ADDRESS=$(echo "$DHCP_INFO" | awk -F"'" '/broadcast_address/ {print $2}')
+    DHCP_LEASE_TIME=$(echo "$DHCP_INFO" | awk -F"'" '/dhcp_lease_time/ {print $2}')
+    DHCP_SERVER=$(echo "$DHCP_INFO" | awk -F"'" '/dhcp_server_identifier/ {print $2}')
+    DOMAIN_SERVERS=$(echo "$DHCP_INFO" | awk -F"'" '/domain_name_servers/ {print $2}')
+
+}
+
 while :; do
 
     # Get IP address
@@ -19,16 +31,18 @@ while :; do
 
     # If IP address is empty, provide an informative message
     if [[ -z $IP ]]; then
-        IP="IP address not available."
+        get_dhcp_info
+        IP="IP address: $IP_ADDRESS"
         PING_RESULT="Ping cannot be performed without an IP."
         ARP_CACHE="ARP cache not available without an IP."
     else
         # Ping the Mac/PC (grab only second line)
-        PING_RESULT=$(ping -c 1 192.168.0.1 | sed -n 2p)
+        PING_RESULT=$(ping -c 1 192.168.2.1 | sed -n 2p)
 
         # Get ARP cache
         ARP_CACHE=$(arp -a)
     fi
+
 
     # Get MAC address
     MAC_ADDRESS=$(ip link show usb0 | awk '/ether/ {print $2}')
@@ -47,6 +61,13 @@ while :; do
     echo -e "\nConection information:"
     echo "Ping result: $PING_RESULT"
     echo -e "ARP cache: \n$ARP_CACHE"
+    if [[ -z $IP ]]; then
+        echo "DHCP Information:"
+        echo "Broadcast address: $BROADCAST_ADDRESS"
+        echo "DHCP lease time: $DHCP_LEASE_TIME"
+        echo "DHCP server: $DHCP_SERVER"
+        echo "Domain name servers: $DOMAIN_SERVERS"
+    fi
     echo -e "\nPieye service status:"
     printf "%-${MAX_LENGTH}s\n" "-" | tr ' ' '-'
     echo -e "$PIEYE_STATUS"
