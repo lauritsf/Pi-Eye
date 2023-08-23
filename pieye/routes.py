@@ -2,9 +2,11 @@ import io
 import os
 import datetime
 import socket
-from bottle import route, abort, response
+from bottle import route, abort, response, template
 from tempfile import TemporaryDirectory
 
+# picamera2 is installed by default on the Raspberry Pi OS image.
+# For development, the mock camera is used instead.
 try:
     from picamera2 import Picamera2  # pylint: disable=import-error
 except ImportError:
@@ -12,16 +14,12 @@ except ImportError:
 
 
 def init_camera():
-    """
-    Initliaze the camera and set its configuration.
-    This involves creating preview and still configurations,
-    and starting the camera.
+    """Initialize the camera and set its configuration.
     
     Returns:
         Picamera2: Initialized camera instance"""
     camera = Picamera2()
 
-    # Define preview and still configurations for the camera
     camera.preview_configuration = camera.create_preview_configuration(
         main={"size": (320, 240), "format": "RGB888"}
     )
@@ -30,20 +28,18 @@ def init_camera():
         raw={}
         )
     camera.configure("preview")
-
     camera.start()
+
     return camera
 
 # Initialize the global camera instance
 camera = init_camera()
 
 
-@route("/camera/reinitialize")
+@route("/reinitialize")
 def reinit_camera():
-    """
-    Reinitialize the camera. This is useful if the there's a problem with the current camera instance.
-    This route closes the current camera instance and reinitializes it.
-    
+    """Reinitialize the camera if there's an issue with the current instance.
+
     Returns:
         dict: JSON response indicaing success of the operation.
     """
@@ -61,8 +57,8 @@ def reinit_camera():
     return response_data
 
 
-@route("/camera/preview")
-def get_preview():
+@route("/quick-preview")
+def get_quick_preview():
     """Fetch a preview image from the camera.
 
     Returns:
@@ -84,7 +80,7 @@ def get_preview():
     except Exception as e:
         abort(500, "Error when getting preview image: " + str(e))
 
-@route('/camera/full-preview')
+@route("/full-preview")
 def get_full_preview():
     """Fetch a full resolution preview image from the camera.
 
@@ -107,8 +103,8 @@ def get_full_preview():
     except Exception as e:
         abort(500, "Error when getting full resolution preview image: " + str(e))
 
-@route("/camera/still-capture")
-def get_still():
+@route("/capture")
+def capture_still():
     """
     Captures a still image and saves it as a dng file. The image is then returned as a bytes buffer.
 
@@ -144,19 +140,37 @@ def get_still():
         abort(500, "Error when capturing still image: " + str(e))
 
 
+from bottle import request, template, json_dumps
+
 @route("/")
 def list_routes():
     """
     Lists the valid routes for the PiEye Server. Acts as the landing page for the server.
-
-    Returns:
-        dict: Dictionary of valid routes
     """
-    return {"valid routes": [
-        "/",
-        "/camera/reinitialize",
-        "/camera/full-preview",
-        "/camera/preview",
-        "/camera/still-capture",
-    ]}
+    routes = [
+        {"url": "/reinitialize", "description": "Reinitialize Camera", "method": "GET"},
+        {"url": "/quick-preview", "description": "Quick Preview", "method": "GET"},
+        {"url": "/full-preview", "description": "Full Resolution Preview", "method": "GET"},
+        {"url": "/capture", "description": "Capture Image", "method": "GET"},
+    ]
 
+    # Check query parameter first
+    format = request.query.get('format', 'html').lower()
+
+    # If no query parameter provided, then check the Accept header
+    if 'application/json' in request.headers.get('Accept', '') and format != 'html':
+        response.content_type = "application/json"
+        return json_dumps({"routes": routes})
+
+    # Default to HTML format
+    html_response = """
+        <h2>Available Routes:</h2>
+        <pre><code>
+        % for route in routes:
+            <a href="{{route['url']}}">{{route['url']}}</a> - {{route['description']}} ({{route['method']}})
+        % end
+        </code></pre>
+    """
+    
+    response.content_type = "text/html"
+    return template(html_response, routes=routes)
