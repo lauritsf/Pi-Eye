@@ -3,15 +3,10 @@
 This file is the entry point for the PiEye Server. It is run when the user runs
 `pieye` from the command line.
 """
+
 import argparse
-import socket
-
 from bottle import run
-
-from pieye import routes
 from pieye.routes import *
-from bottle import run
-import argparse
 
 
 def run_server(host="0.0.0.0", port=8080, debug=False, reloader=False):
@@ -52,6 +47,7 @@ def main():
         default=8080,
         help="Port to run server on (default: 8080)",
     )
+
     args = parser.parse_args()
 
     run_server(args.host, args.port, args.debug, args.reloader)
